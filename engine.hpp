@@ -25,6 +25,31 @@ class Value {
         bool operator==(const Value *other) const;
     };
 
+// neg
+Value operator-(Value &self, float other);
+
 Value operator+(Value &self, Value &other);
+Value operator+(Value &self, float other);
+Value operator+(float other, Value &self);
+Value operator+(Value self,  const Value &other);
+
+Value operator-(Value &self, Value &other);
+Value operator-(Value &self, float other);
+Value operator-(float other, Value &self);
+Value operator-(Value self, const Value &other);
+
+Value operator*(Value &self, Value &other);
+Value operator*(Value &self, float other);
+Value operator*(float other, Value &self);
+Value operator*(Value self, const Value &other);
+
+Value operator/(Value &self, Value &other);
+Value operator/(Value &self, float other);
+Value operator/(float other, Value &self);
+Value operator/(Value self, const Value &other);
+
+Value operator^(Value &self, float other);
+Value operator^(Value self, const float other);
+
 
 #endif
