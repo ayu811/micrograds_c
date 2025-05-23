@@ -59,6 +59,7 @@ void Value::backward() {
             topo.push_back(*v);
         }
     };
+    build_topo(this);
     this->grad = 1;
     for(auto v = std::rbegin(topo); v != std::rend(topo); v++) {
         v->_backward();
@@ -67,6 +68,10 @@ void Value::backward() {
 
 bool Value::operator==(const Value *other) const {
     return this == other;
+}
+
+bool operator==(Value &self, Value &other) {
+    return &self == &other;
 }
 
 Value operator-(Value &self)  {
@@ -93,8 +98,8 @@ Value operator+(Value self, const Value &other) {
 }
 
 Value operator-(Value &self, Value &other) {
-    Value other_n = -other;
-    return self.add(&other_n);
+    Value other_val = Value(-other.data, {}, "");
+    return self.add(&other_val);
 }
 
 Value operator-(Value &self, float other) {
@@ -151,21 +156,26 @@ Value operator/(Value self, const Value &other) {
 }
 
 // ^ was used as power op.
-Value operator^(Value &self, float other) {
-    return self.pow(other);
-}
-
-Value operator^(Value self, const float other) {
+Value operator^(Value self, float other) {
+    std::cout << self.data << std::endl;
     return self.pow(other);
 }
 
 int main(int argc, char **argv) {
-    auto a = Value(8.0, {}, "");
+    auto a = Value(-4.0, {}, "");
     auto b = Value(2.0, {}, "");
     auto c = a + b;
-    auto d = a * b + b^3.0;
-    c = 2*c + 1;
-    d = 2*d * 2 + (b + a).relu();
-    d = 3 * d*2 + (b - a).relu();
-    std::cout << c.data << std::endl;
+    auto d = a * b + (b^3.0);  // -8 + 8 = 0
+    std::cout << d.data << std::endl;
+    c = c + c + 1;
+    c = c + 1 + c + (-a);
+    d = d + d * 2 + (b + a).relu();
+    d = d + 3*d + (b - a).relu();
+    auto e = c - d;
+    auto f = e^2.0;
+    auto g = f / 2.0;
+    g = g + 10.0 / f;
+    std::cout << "g.data:" << g.data << std::endl;
+    g.backward();
+    return 0;
 }
